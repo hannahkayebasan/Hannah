@@ -1,0 +1,122 @@
+import javax.swing.JOptionPane;
+
+
+abstract class GameCharacter {
+    String name;
+    int hp;
+
+    GameCharacter(String name, int hp) {
+        this.name = name;
+        this.hp = hp;
+    }
+
+    abstract void attack(GameCharacter opponent, int choice);
+
+    boolean isAlive() {
+        return hp > 0;
+    }
+}
+
+// class sa mij
+class Mage extends GameCharacter {
+    Mage(String name) {
+        super(name, 100);
+    }
+
+    @Override
+    void attack(GameCharacter opponent, int choice) {
+        int damage = 0;
+        String move = "";
+
+        switch (choice) {
+            case 1: move = "Ice Shard"; damage = 20; break; // Attack
+            case 2: move = "Frost Nova"; damage = 25; break; // Special Move
+            case 3: move = "Blizzard Storm"; damage = 30; break; // Secret Power
+            default: move = "failed spell"; damage = 0;
+        }
+
+        opponent.hp -= damage;
+        if (opponent.hp < 0) opponent.hp = 0;
+
+        JOptionPane.showMessageDialog(null,
+            name + " casts " + move + "! (" + damage + " damage)\n"
+            + opponent.name + " now has " + opponent.hp + " HP.");
+    }
+}
+
+// class sa waryur
+class Warrior extends GameCharacter {
+    Warrior(String name) {
+        super(name, 100);
+    }
+
+    @Override
+    void attack(GameCharacter opponent, int choice) {
+        int damage = 0;
+        String move = "";
+
+        switch (choice) {
+            case 1: move = "Axe Chop"; damage = 15; break; // Attack
+            case 2: move = "Groud Slam"; damage = 20; break; // Special Move
+            case 3: move = "Berserker Rage"; damage = 30; break; // Secret Power
+            default: move = "missed attack"; damage = 0;
+        }
+
+        opponent.hp -= damage;
+        if (opponent.hp < 0) opponent.hp = 0;
+
+        JOptionPane.showMessageDialog(null,
+            name + " uses " + move + "! (" + damage + " damage)\n"
+            + opponent.name + " now has " + opponent.hp + " HP.");
+    }
+}
+
+public class TurnBasedGame {
+    public static void main(String[] args) {
+        // Welcome message kay para achup
+        JOptionPane.showMessageDialog(null, 
+            "✨ Welcome to the Mage vs Warrior Battle Game! ✨");
+
+        // Input Mage’s name
+        String mageName = JOptionPane.showInputDialog("Please enter a name for the Mage:");
+
+        // Input Warrior’s name
+        String warriorName = JOptionPane.showInputDialog("Please enter a name for the Warrior:");
+
+        Mage mage = new Mage(mageName);
+        Warrior warrior = new Warrior(warriorName);
+
+        // Game start
+        JOptionPane.showMessageDialog(null, 
+            "Game starts! Both " + mage.name + " and " + warrior.name + " have 100 HP.");
+
+        // Battle loop
+        while (mage.isAlive() && warrior.isAlive()) {
+            // Mage Turn
+            String mageInput = JOptionPane.showInputDialog(
+                mage.name + "'s turn! Choose a move:\n" +
+                "[1] Ice Shard (Attack - 20 dmg)\n" +
+                "[2] Frost Nova (Special Move - 25 dmg)\n" +
+                "[3] Blizzard Storm (Secret Power - 30 dmg)"
+            );
+            int mageChoice = Integer.parseInt(mageInput);
+            mage.attack(warrior, mageChoice);
+            if (!warrior.isAlive()) break;
+
+            // Warrior Turn
+            String warInput = JOptionPane.showInputDialog(
+                warrior.name + "'s turn! Choose a move:\n" +
+                "[1] Axe Chop (Attack - 15 dmg)\n" +
+                "[2] Groud Slam (Special Move - 20 dmg)\n" +
+                "[3] Berserker Rage(Secret Power - 30 dmg)"
+            );
+            int warChoice = Integer.parseInt(warInput);
+            warrior.attack(mage, warChoice);
+        }
+
+        // Wow winner
+        String winner = mage.isAlive() ? mage.name : warrior.name;
+        JOptionPane.showMessageDialog(null, 
+            "🎉 Game Over! " + winner + " wins the battle!");
+    }
+}
